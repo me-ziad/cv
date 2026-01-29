@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
 import {fetchProjects,addProject,updateProject,deleteProject,deleteProjectImage,} from "../redux/projectsSlice";
-import {Box,Card,CardContent,Typography,TextField,Button,Grid,Stack,Chip,Dialog,DialogContent,IconButton,Tooltip,useTheme,Divider,} from "@mui/material";
+import {Box,Card,CardContent,Typography,TextField,Button,Grid,Stack,Chip,Dialog,DialogContent,IconButton,Tooltip,useTheme,Divider, useMediaQuery,} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -23,8 +23,8 @@ const emptyForm = {
 };
 
 export default function ProjectsProDark() {
-  const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme();
+  const dispatch = useDispatch<AppDispatch>();
   const primaryBlue = theme.palette.primary.main;
   const { list, loading, error } = useSelector((state: RootState) => state.projects,);
   const [form, setForm] = useState<any>(emptyForm);
@@ -36,22 +36,25 @@ export default function ProjectsProDark() {
   const [technologies, setTechnologies] = useState<string[]>([]);
   const [techInput, setTechInput] = useState<string>("");
    const [currentSlide, setCurrentSlide] = useState(0);
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
     const [viewProjectId, setViewProjectId] = useState<string | null>(null);
- const viewProject = useMemo(
-  () => list.find((p: any) => p._id === viewProjectId) || null,
-  [list, viewProjectId]
-);
+    const viewProject = useMemo(
+      () => list.find((p: any) => p._id === viewProjectId) || null,
+      [list, viewProjectId]
+    );
+
+
  useEffect(() => {
     dispatch(fetchProjects());
   }, [dispatch]);
 
-  /** 🔥 project دايمًا من redux */
-  const viewProjects = useMemo(
+  // view project
+   const viewProjects = useMemo(
     () => list.find((p: any) => p._id === viewProjectId),
     [list, viewProjectId]
   );
 
-  /** 🔥 reset السلايد */
+//  slider
   useEffect(() => {
     setCurrentSlide(0);
   }, [viewProject?.images?.length]);
@@ -91,11 +94,11 @@ const handleAddOrUpdate = async (data?: any) => {
 
       if (editMode) {
         await dispatch(updateProject({ projectId: editMode._id, updates: formData })).unwrap();
-        await dispatch(fetchProjects()).unwrap(); // تحديث قائمة المشاريع
-        setViewProjectId(editMode._id); // خلي الـ modal مفتوح للمشروع المحدث
+        await dispatch(fetchProjects()).unwrap();  
+        setViewProjectId(editMode._id); 
       } else {
         await dispatch(addProject(formData)).unwrap();
-        await dispatch(fetchProjects()).unwrap(); // تحديث القائمة بعد الإضافة
+        await dispatch(fetchProjects()).unwrap();  
       }
     } else {
       const payload = {
@@ -117,7 +120,7 @@ const handleAddOrUpdate = async (data?: any) => {
     }
 
     toast.update(loadingToast, {
-      render: editMode ? "Project updated successfully ✅" : "Project added successfully ✅",
+      render: editMode ? "Project updated successfully  " : "Project added successfully  ",
       type: "success",
       isLoading: false,
       autoClose: 2500,
@@ -134,7 +137,7 @@ const handleAddOrUpdate = async (data?: any) => {
     setOpenModal(false);
   } catch (err) {
     toast.update(loadingToast, {
-      render: "Something went wrong ❌",
+      render: "Something went wrong  ",
       type: "error",
       isLoading: false,
       autoClose: 3000,
@@ -205,9 +208,9 @@ const handleDeleteImage = async (projectId: string, img: string) => {
       {loading ? (
         <Loading></Loading>
       ) : (
-        <Box sx={{ p: 3, mt: 10 }}>
+        <Box sx={{ p:{xs:0,md: 3}, mt: 10 }}>
           <Stack direction="row" justifyContent="space-between" mb={3}>
-            <Typography variant="h5" color="#fff" fontWeight={700}>
+            <Typography variant="h6" color="#fff" fontWeight={700}>
               Projects
             </Typography>
             <Button
@@ -231,9 +234,9 @@ const handleDeleteImage = async (projectId: string, img: string) => {
     sx={{
       display: "grid",
       gridTemplateColumns: {
-        xs: "1fr", // موبايل
-        sm: "1fr 1fr", // تابليت
-        md: "1fr 1fr 1fr", // ديسكتوب
+        xs: "1fr",  
+        sm: "1fr 1fr",  
+        md: "1fr 1fr 1fr", 
       },
       gap: 4,
       maxWidth: "1600px",
@@ -253,7 +256,7 @@ const handleDeleteImage = async (projectId: string, img: string) => {
             overflow: "hidden",
             cursor: "pointer",
             position: "relative",
-            height: 300, // ارتفاع ثابت لكل الكروت
+            height: 300, 
             display: "flex",
             flexDirection: "column",
             "&:hover .overlay": { opacity: 1 },
@@ -335,6 +338,17 @@ const handleDeleteImage = async (projectId: string, img: string) => {
             onClose={() => setViewProjectId(null)}
             maxWidth="2lg"
             fullWidth
+             fullScreen={isSmallScreen} 
+           PaperProps={{
+                      sx: {
+                        borderRadius: { xs: 0, md: 4 },  
+                        bgcolor: "#121212",
+                        backdropFilter: "blur(20px)",
+                        border: { md: `2px solid ${primaryBlue}` },
+                        boxShadow: "0 12px 40px rgba(0,0,0,0.7)",
+                        m: { xs: 0 },  
+                       },
+                    }}
           >
             {viewProject && (
               <DialogContent
@@ -352,13 +366,13 @@ const handleDeleteImage = async (projectId: string, img: string) => {
                   onClick={() => setViewProjectId(null)}
                   sx={{
                     position: "absolute",
-                    top: { xs: 0, md: 16 },
+                    top: { xs: 17, md: 16 },
                     right: { md: 16 },
-                      bgcolor: "rgb(147, 0, 0)",
+                      bgcolor: "rgb(255, 255, 255)",
                     zIndex: 10,
                   }}
                 >
-                  <CloseIcon sx={{ color: "#fff" }} />
+                  <CloseIcon sx={{ color: "#ff1010" }} />
                 </IconButton>
 
                 {/* ================= LEFT – SLIDER ================= */}
@@ -419,13 +433,13 @@ const handleDeleteImage = async (projectId: string, img: string) => {
                                 position: "absolute",
                                 top: 10,
                                 right: 10,
-                                bgcolor: "rgba(255, 18, 18, 0.64)",
+                                bgcolor: "rgb(255, 18, 18)",
                               }}
                               onClick={() =>
                                 handleDeleteImage(viewProject._id, img)
                               }
                             >
-                              <DeleteIcon sx={{ color: "#fff" }} />
+                              <DeleteIcon sx={{fontSize:20,color: "#fff" }} />
                             </IconButton>
                           </Box>
                         );
@@ -595,18 +609,17 @@ const handleDeleteImage = async (projectId: string, img: string) => {
             onClose={() => setOpenModal(false)}
             fullWidth
             maxWidth="md"
-            PaperProps={{
-              component: motion.div,
-              initial: { opacity: 0, y: -30 },
-              animate: { opacity: 1, y: 0 },
-              transition: { duration: 0.3 },
-              sx: {
-                borderRadius: 4,
-                bgcolor: "#121212",
-                border: `2px solid ${primaryBlue}`,
-                p: { sx: 0, md: 3 },
-              },
-            }}
+            fullScreen={isSmallScreen}  
+           PaperProps={{
+            sx: {
+              borderRadius: { xs: 0, md: 4 },  
+              bgcolor: "#121212",
+              backdropFilter: "blur(20px)",
+              border: { md: `2px solid ${primaryBlue}` },
+              boxShadow: "0 12px 40px rgba(0,0,0,0.7)",
+              m: { xs: 0 },  
+                    },
+                    }}
           >
             <DialogContent>
               <Stack spacing={3}>
@@ -714,7 +727,7 @@ const handleDeleteImage = async (projectId: string, img: string) => {
                     </Button>
                   </Stack>
 
-                  <Stack direction="row" gap={1} spacing={1} flexWrap="wrap">
+                  <Stack direction="row" gap={1}  flexWrap="wrap">
                     {technologies.map((tech, idx) => (
                       <Chip
                         key={idx}

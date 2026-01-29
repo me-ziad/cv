@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
-import {fetchExperience,addExperience,updateExperience,deleteExperience,} from "../redux/experienceSlice";0
-import {Box,Card,CardContent,Typography,Button,Stack,Dialog,DialogContent,TextField,IconButton,Tooltip,Chip,useTheme,} from "@mui/material";
+import {fetchExperience,addExperience,updateExperience,deleteExperience,} from "../redux/experienceSlice";
+import {Box,Card,CardContent,Typography,Button,Stack,Dialog,DialogContent,TextField,IconButton,Tooltip,Chip,useTheme,useMediaQuery,} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -23,12 +23,14 @@ const emptyForm = {
 export default function ExperienceProDark() {
   const dispatch = useDispatch<AppDispatch>();
   const theme = useTheme();
-  const { list, loading, error } = useSelector((state: RootState) => state.experience);
+  const { list, loading, error } = useSelector(
+    (state: RootState) => state.experience,
+  );
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<any>(emptyForm);
   const [editId, setEditId] = useState<string | null>(null);
   const primaryBlue = theme.palette.primary.main;
-
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   useEffect(() => {
     dispatch(fetchExperience());
   }, [dispatch]);
@@ -48,11 +50,15 @@ export default function ExperienceProDark() {
   const handleSave = async () => {
     if (!form.company || !form.position) return;
 
-    const toastId = toast.loading(editId ? "Updating experience..." : "Adding experience...");
+    const toastId = toast.loading(
+      editId ? "Updating experience..." : "Adding experience...",
+    );
 
     try {
       if (editId) {
-        await dispatch(updateExperience({ expId: editId, updates: form })).unwrap();
+        await dispatch(
+          updateExperience({ expId: editId, updates: form }),
+        ).unwrap();
         toast.update(toastId, {
           render: "Experience updated successfully",
           type: "success",
@@ -108,7 +114,7 @@ export default function ExperienceProDark() {
       ) : (
         <Card
           sx={{
-            p: 3,
+            p: { xs: 0, md: 3 },
             mt: 10,
             borderRadius: 3,
             backdropFilter: "blur(14px)",
@@ -123,7 +129,7 @@ export default function ExperienceProDark() {
               alignItems="center"
               mb={3}
             >
-              <Typography variant="h5" fontWeight={700} color="#FFF">
+              <Typography variant="h6" fontWeight={700} color="#FFF">
                 Experience
               </Typography>
               <Button
@@ -132,6 +138,7 @@ export default function ExperienceProDark() {
                 sx={{
                   background: primaryBlue,
                   color: "#FFF",
+                  fontSize: { xs: 11, md: 15 },
                   "&:hover": { backgroundColor: `${primaryBlue}CC` },
                 }}
                 onClick={openAdd}
@@ -143,7 +150,7 @@ export default function ExperienceProDark() {
             {error && <Typography color="error">{error}</Typography>}
 
             {/* Timeline */}
-            <Box sx={{ position: "relative", pl: 6 }}>
+            <Box sx={{ position: "relative", pl: { xs: 1, md: 6 } }}>
               <Box
                 sx={{
                   position: "absolute",
@@ -216,7 +223,9 @@ export default function ExperienceProDark() {
                             </Typography>
                             <Typography fontSize={13} color="#aaa">
                               {exp.startDate?.slice(0, 4)} –{" "}
-                              {exp.endDate ? exp.endDate.slice(0, 4) : "Present"}
+                              {exp.endDate
+                                ? exp.endDate.slice(0, 4)
+                                : "Present"}
                             </Typography>
                             {exp.description && (
                               <Typography fontSize={14} mt={1} color="#eee">
@@ -294,6 +303,7 @@ export default function ExperienceProDark() {
             onClose={() => setOpen(false)}
             maxWidth="sm"
             fullWidth
+            fullScreen={isSmallScreen}
             PaperProps={{
               component: motion.div,
               initial: { opacity: 0, y: -30 },
@@ -301,11 +311,14 @@ export default function ExperienceProDark() {
               exit: { opacity: 0, y: -30 },
               transition: { duration: 0.3 },
               sx: {
-                borderRadius: 4,
+                borderRadius: { xs: 0, md: 4 },
                 bgcolor: "#121212",
                 backdropFilter: "blur(20px)",
-                border: `2px solid ${primaryBlue}`,
+                border: { md: `2px solid ${primaryBlue}` },
                 boxShadow: "0 12px 40px rgba(0,0,0,0.7)",
+                m: { xs: 0 },
+                width: { xs: "100%", md: "40%" },
+                height: { xs: "100%", md: "auto" },
               },
             }}
           >

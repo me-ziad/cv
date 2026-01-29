@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
 import { fetchProjects } from "../redux/projectsSlice";
-import {Box,Typography,IconButton,Dialog,DialogContent,useTheme,Stack,Button,Grid,Divider,} from "@mui/material";
+import {Box,Typography,IconButton,Dialog,DialogContent,useTheme,Stack,Button,Grid,Divider, useMediaQuery,} from "@mui/material";
 import { motion } from "framer-motion";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
@@ -21,7 +21,8 @@ export default function ProjectsSliderPage() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = React.useRef<HTMLDivElement>(null);
   const theme = useTheme();
-
+  const primaryBlue = theme.palette.primary.main;
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   useEffect(() => {
     dispatch(fetchProjects());
   }, [dispatch]);
@@ -38,7 +39,7 @@ export default function ProjectsSliderPage() {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box sx={{ p: {xs:.1,md:3} }}>
       {loading && <Typography color="#aaa">Loading...</Typography>}
       {error && <Typography color="error">{error}</Typography>}
 
@@ -171,6 +172,23 @@ export default function ProjectsSliderPage() {
         onClose={() => setViewProject(null)}
         maxWidth="2lg"
         fullWidth
+        fullScreen={isSmallScreen}  
+         PaperProps={{
+                      component: motion.div,
+                      initial: { opacity: 0, y: -30 },
+                      animate: { opacity: 1, y: 0 },
+                      exit: { opacity: 0, y: -30 },
+                      transition: { duration: 0.3 },
+                      sx: {
+                      borderRadius: { xs: 0, md: 4 },  
+                      bgcolor: "#121212",
+                      border: { md: `2px solid ${primaryBlue}` },
+                      backdropFilter: "blur(20px)",
+                       boxShadow: "0 12px 40px rgba(0,0,0,0.7)",
+                      m: { xs: 0 },  
+ 
+                    },
+                    }}
       >
         {viewProject && (
           <DialogContent
@@ -188,13 +206,13 @@ export default function ProjectsSliderPage() {
               sx={{
                 zIndex: 100,
                 position: "absolute",
-                top: { xs: 0, md: 0 },
-                right: { xs: 0, md: 0 },
-                bgcolor: "rgba(255,0,0,0.4)",
-                "&:hover": { bgcolor: "rgba(255,0,0,0.8)" },
+                top: { xs: 20, md: 12 },
+                right: { xs: 20, md: 12 },
+                bgcolor: "rgba(255, 255, 255, 0.95)",
+                "&:hover": { bgcolor: "rgba(255, 255, 255, 0.8)" },
               }}
             >
-              <CloseIcon sx={{ color: "#fff" }} />
+              <CloseIcon sx={{ color: "#000000" }} />
             </IconButton>
 
             {/* Slider */}
@@ -307,7 +325,7 @@ export default function ProjectsSliderPage() {
                   <Typography variant="subtitle2" color="#aaa" mb={0.5}>
                     Title
                   </Typography>
-                  <Typography variant="h4" fontWeight={700}>
+                  <Typography variant="h4" sx={{fontSize:{xs:16,md:23}}} fontWeight={700}>
                     {viewProject.title}
                   </Typography>
                 </Box>

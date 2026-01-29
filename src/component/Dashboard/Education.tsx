@@ -3,13 +3,14 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
 import {fetchEducation,addEducation,updateEducation,deleteEducation,} from "../redux/educationSlice";
-import {Box,Card,CardContent,Typography,Button,Stack,Dialog,DialogContent,TextField,IconButton,Tooltip,Chip,useTheme,} from "@mui/material";
+import {Box,Card,CardContent,Typography,Button,Stack,Dialog,DialogContent,TextField,IconButton,Tooltip,Chip,useTheme, useMediaQuery,} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { motion } from "framer-motion";
 import Loading from "../loading";
 import { toast } from "react-toastify";
+
 
 const emptyForm = {
   school: "",
@@ -28,6 +29,7 @@ export default function EducationProDark() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<any>(emptyForm);
   const [editId, setEditId] = useState<string | null>(null);
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     dispatch(fetchEducation());
@@ -110,7 +112,7 @@ export default function EducationProDark() {
       ) : (
         <Card
           sx={{
-            p: 3,
+            p: {xs:0,md:3},
             mt: 10,
             borderRadius: 3,
             backdropFilter: "blur(14px)",
@@ -125,7 +127,7 @@ export default function EducationProDark() {
               alignItems="center"
               mb={3}
             >
-              <Typography variant="h5" fontWeight={700} color="#FFF">
+              <Typography variant="h6" fontWeight={700} color="#FFF">
                 Education
               </Typography>
               <Button
@@ -134,6 +136,7 @@ export default function EducationProDark() {
                 sx={{
                   background: primaryBlue,
                   color: "#FFF",
+                  fontSize:{xs:11,md:15},
                   "&:hover": { backgroundColor: `${primaryBlue}CC` },
                 }}
                 onClick={openAdd}
@@ -145,7 +148,7 @@ export default function EducationProDark() {
             {error && <Typography color="error">{error}</Typography>}
 
             {/* Timeline */}
-            <Box sx={{ position: "relative", pl: 6 }}>
+            <Box sx={{ position: "relative", pl: {xs:1,md:6} }}>
               <Box
                 sx={{
                   position: "absolute",
@@ -209,12 +212,12 @@ export default function EducationProDark() {
                           <Box>
                             <Typography
                               fontWeight={700}
-                              fontSize={17}
+                              fontSize={{xs:13,md:17}}
                               color="#FFF"
                             >
                               {edu.school}
                             </Typography>
-                            <Typography fontSize={14} color="#ccc">
+                            <Typography fontSize={{xs:12,md:14}} color="#ccc">
                               {edu.degree}
                               {edu.fieldOfStudy && ` · ${edu.fieldOfStudy}`}
                             </Typography>
@@ -223,7 +226,7 @@ export default function EducationProDark() {
                               {edu.endDate ? edu.endDate.slice(0, 4) : "Present"}
                             </Typography>
                             {edu.description && (
-                              <Typography fontSize={14} mt={1} color="#eee">
+                              <Typography fontSize={{xs:13,md:14}} mt={1} color="#eee">
                                 {edu.description}
                               </Typography>
                             )}
@@ -292,28 +295,34 @@ export default function EducationProDark() {
             </Box>
           </CardContent>
 
-          {/* Add/Edit Modal */}
-          <Dialog
-            open={open}
-            onClose={() => setOpen(false)}
-            maxWidth="sm"
-            fullWidth
-            PaperProps={{
-              component: motion.div,
-              initial: { opacity: 0, y: -30 },
-              animate: { opacity: 1, y: 0 },
-              exit: { opacity: 0, y: -30 },
-              transition: { duration: 0.3 },
-              sx: {
-                borderRadius: 4,
-                bgcolor: "#121212",
-                backdropFilter: "blur(20px)",
-                border: `2px solid ${primaryBlue}`,
-                boxShadow: "0 12px 40px rgba(0,0,0,0.7)",
-              },
-            }}
-          >
-            <DialogContent>
+                {/* Add/Edit Modal */}
+                <Dialog
+              open={open}
+              onClose={() => setOpen(false)}
+              fullWidth
+              maxWidth="md"
+              fullScreen={isSmallScreen}  
+
+              PaperProps={{
+                component: motion.div,
+                initial: { opacity: 0, y: -30 },
+                animate: { opacity: 1, y: 0 },
+                exit: { opacity: 0, y: -30 },
+                transition: { duration: 0.3 },
+                sx: {
+                  borderRadius: { xs: 0, md: 4 },  
+                  bgcolor: "#121212",
+                  
+                  backdropFilter: "blur(20px)",
+                  border: { md: `2px solid ${primaryBlue}` },
+                  boxShadow: "0 12px 40px rgba(0,0,0,0.7)",
+                  m: { xs: 0 },  
+                  width: { xs: "100%", md: "40%" },  
+                  height: { xs: "100%", md: "auto" }, 
+                },
+              }}
+            >
+            <DialogContent sx={{p:{xs:1,md:2}}}>
               <Stack spacing={3}>
                 <Typography variant="h6" fontWeight={700} color="#FFF">
                   {editId ? "Edit Education" : "Add Education"}

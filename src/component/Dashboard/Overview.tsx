@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../../store/store";
-import {Box,Typography,Avatar,Chip,Grid,Stack,TextField,Button,Dialog,DialogTitle,DialogContent,DialogActions,Accordion,AccordionSummary,AccordionDetails,Link,} from "@mui/material";
+import {Box,Typography,Avatar,Chip,Grid,Stack,TextField,Button,Dialog,DialogTitle,DialogContent,DialogActions,Accordion,AccordionSummary,AccordionDetails,Link,useMediaQuery,useTheme,} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { fetchProfile, updateProfile } from "../redux/profileSlice";
 import ProjectsPage from "./showProject";
@@ -30,7 +30,7 @@ const cardBg = "#181818ff";
 
 // CARD COLOR
 const darkCard = {
-  p: 2.5,
+  p: 1,
   borderRadius: 3,
   border: "1px solid #1E1E2F",
   bgcolor: cardBg,
@@ -49,8 +49,22 @@ const socialChip = {
   },
 };
 
-const SectionAccordion = ({title,children,}: {title: string;children: React.ReactNode;}) => (
-  <Accordion sx={{mb: 2,bgcolor: cardBg,borderRadius: 3,border: "1px solid #1E1E2F","&:before": { display: "none" },}}>
+const SectionAccordion = ({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) => (
+  <Accordion
+    sx={{
+      mb: 2,
+      bgcolor: cardBg,
+      borderRadius: 3,
+      border: "1px solid #1E1E2F",
+      "&:before": { display: "none" },
+    }}
+  >
     <AccordionSummary
       expandIcon={<ExpandMoreIcon sx={{ color: textPrimary }} />}
     >
@@ -64,7 +78,9 @@ const SectionAccordion = ({title,children,}: {title: string;children: React.Reac
 
 export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
   const dispatch = useDispatch<AppDispatch>();
-  const { data, loading, error } = useSelector((state: RootState) => state.profile,);
+  const { data, loading, error } = useSelector(
+    (state: RootState) => state.profile,
+  );
   const [preview, setPreview] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<any>({});
@@ -72,7 +88,9 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
   const [openDialog, setOpenDialog] = useState(false);
   const [shareLink, setShareLink] = useState<string>("");
   const [openSnackbar, setOpenSnackbar] = useState(false);
-
+  const theme = useTheme();
+  const primaryBlue = theme.palette.primary.main;
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   // SHARE
   const handleShare = async () => {
@@ -81,12 +99,12 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
     setShareLink(link);
     try {
       await navigator.clipboard.writeText(link);
-      setOpenSnackbar(true); 
+      setOpenSnackbar(true);
     } catch (err) {
-       setOpenDialog(true);
+      setOpenDialog(true);
     }
   };
-  
+
   // STYE INPUT
   const inputStyle = {
     "& .MuiInputBase-input": {
@@ -115,10 +133,9 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
 
   useEffect(() => {
     if (data) setForm(data);
-   }, [data]);
+  }, [data]);
 
-  
-    // SAVE
+  // SAVE
   const handleSave = () => {
     const formData = new FormData();
     formData.append("name", form.name || "");
@@ -138,20 +155,19 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
     setOpen(false);
   };
 
-
   if (loading) return <Loading></Loading>;
   if (error) return <Typography color="error">{error}</Typography>;
   if (!data) return null;
 
   return (
-    <Box sx={{ p: 2, mt: 9 }}>
-      
+    <Box sx={{ p: { xs: 0, md: 4 }, mt: 9 }}>
       {/* ================= Header ================= */}
       <Box sx={{ ...darkCard, mb: 4 }}>
         <Grid
           container
           spacing={3}
           alignItems={{ xs: "center", md: "flex-start" }}
+          justifyContent={{ xs: "center", md: "flex-start" }}
         >
           {/* Avatar */}
           <Grid item>
@@ -167,7 +183,12 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
           </Grid>
 
           {/* Info */}
-          <Grid item xs={12} md>
+          <Grid
+            sx={{ textAlign: { xs: "center", md: "left" } }}
+            item
+            xs={12}
+            md
+          >
             <Typography variant="h5" fontWeight={700} color={textPrimary}>
               {data.name}
             </Typography>
@@ -185,8 +206,8 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
             <Stack
               direction={{ xs: "column", sm: "row" }}
               spacing={1.5}
-              justifyContent={{ xs: "flex-start", md: "flex-start" }}
-              alignItems={{ xs: "flex-start", md: "flex-start" }}
+              justifyContent={{ xs: "center", md: "flex-start" }}
+              alignItems={{ xs: "center", md: "flex-start" }}
               flexWrap="wrap"
             >
               {data.email && (
@@ -304,6 +325,7 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
                     variant="contained"
                     onClick={() => setOpen(true)}
                     sx={{
+                      fontSize: { xs: 11, md: 14 },
                       bgcolor: primaryBlue,
                       "&:hover": { bgcolor: "#2563EB" },
                     }}
@@ -314,9 +336,10 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
                   <Button
                     startIcon={<ShareIcon />}
                     variant="outlined"
-                    onClick={handleShare}  
+                    onClick={handleShare}
                     sx={{
                       color: primaryBlue,
+                      fontSize: { xs: 11, md: 14 },
                       borderColor: primaryBlue,
                       "&:hover": { borderColor: "#2563EB", bgcolor: "#1E293B" },
                     }}
@@ -330,8 +353,8 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
         </Grid>
       </Box>
 
-          {/* ================= BIO ================= */}
-       <SectionAccordion title="Bio">
+      {/* ================= BIO ================= */}
+      <SectionAccordion title="Bio">
         <Typography color={"#9CA3AF"}>
           {data.bio || "No bio available"}
         </Typography>
@@ -340,9 +363,9 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
       {/* ================= Skills ================= */}
       <SectionAccordion title="Skills">
         <Stack direction="row" gap={2} flexWrap="wrap">
-              {data.skills?.map((s: string, index: number) => (
+          {data.skills?.map((s: string, index: number) => (
             <Chip
-              key={`${s}-${index}`}  
+              key={`${s}-${index}`}
               label={s}
               sx={{
                 bgcolor: "#0c4fdeff",
@@ -355,7 +378,7 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
 
       {/* ================= Education ================= */}
       <SectionAccordion title="Education">
-        <Box sx={{ position: "relative", pl: 6 }}>
+        <Box sx={{ position: "relative", pl: { xs: 0, md: 6 } }}>
           {/* Vertical line */}
           <Box
             sx={{
@@ -391,7 +414,7 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
                 <Box
                   sx={{
                     py: 2.5,
-                    pl: 3,
+                    pl: { xs: 1, md: 3 },
                     borderRadius: 3,
                     bgcolor: "#1E1E2F",
                     border: "1px solid #1E1E2F",
@@ -406,7 +429,7 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
                   {/* Degree */}
                   <Typography
                     fontWeight={700}
-                    fontSize={16}
+                    fontSize={{ xs: 14, md: 17 }}
                     color={textPrimary}
                   >
                     {edu.degree}
@@ -414,7 +437,7 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
 
                   {/* School */}
                   <Typography
-                    fontSize={14}
+                    fontSize={{ xs: 13, md: 15 }}
                     color={textSecondary}
                     sx={{ mt: 0.3 }}
                   >
@@ -422,14 +445,22 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
                   </Typography>
 
                   {/* Date */}
-                  <Typography fontSize={13} color="#A1A1AA" sx={{ mt: 0.5 }}>
+                  <Typography
+                    fontSize={{ xs: 13, md: 14 }}
+                    color="#A1A1AA"
+                    sx={{ mt: 0.5 }}
+                  >
                     {edu.startDate?.slice(0, 4)} –{" "}
                     {edu.endDate ? edu.endDate.slice(0, 4) : edu.graduationYear}
                   </Typography>
 
                   {/* Description */}
                   {edu.description && (
-                    <Typography fontSize={14} color="#D1D5DB" sx={{ mt: 1 }}>
+                    <Typography
+                      fontSize={{ xs: 13, md: 14 }}
+                      color="#D1D5DB"
+                      sx={{ mt: 1 }}
+                    >
                       {edu.description}
                     </Typography>
                   )}
@@ -442,7 +473,7 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
 
       {/* ================= Experience ================= */}
       <SectionAccordion title="Experience">
-        <Box sx={{ position: "relative", pl: 6 }}>
+        <Box sx={{ position: "relative", pl: { xs: 1, md: 6 } }}>
           {/* Vertical line */}
           <Box
             sx={{
@@ -478,7 +509,7 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
                 <Box
                   sx={{
                     py: 2.5,
-                    pl: 3,
+                    pl: { xs: 1, md: 3 },
                     borderRadius: 3,
                     bgcolor: "#1E1E2F",
                     border: "1px solid #1E1E2F",
@@ -493,14 +524,14 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
                   {/* Company + Position */}
                   <Typography
                     fontWeight={700}
-                    fontSize={16}
+                    fontSize={{ xs: 14, md: 17 }}
                     color={textPrimary}
                   >
                     {exp.position}
                   </Typography>
 
                   <Typography
-                    fontSize={14}
+                    fontSize={{ xs: 13, md: 15 }}
                     color={textSecondary}
                     sx={{ mt: 0.3 }}
                   >
@@ -508,14 +539,22 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
                   </Typography>
 
                   {/* Date */}
-                  <Typography fontSize={13} color="#A1A1AA" sx={{ mt: 0.5 }}>
+                  <Typography
+                    fontSize={{ xs: 13, md: 14 }}
+                    color="#A1A1AA"
+                    sx={{ mt: 0.5 }}
+                  >
                     {exp.startDate?.slice(0, 4)} –{" "}
                     {exp.endDate ? exp.endDate.slice(0, 4) : "Present"}
                   </Typography>
 
                   {/* Description */}
                   {exp.description && (
-                    <Typography fontSize={14} color="#D1D5DB" sx={{ mt: 1 }}>
+                    <Typography
+                      fontSize={{ xs: 13, md: 14 }}
+                      color="#D1D5DB"
+                      sx={{ mt: 1 }}
+                    >
                       {exp.description}
                     </Typography>
                   )}
@@ -531,7 +570,6 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
           )}
         </Box>
       </SectionAccordion>
-
 
       {/* ================= Projects ================= */}
       <SectionAccordion title="Projects">
@@ -549,13 +587,13 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
         )}
       </SectionAccordion>
 
-
       {/* EDITE PROFILE */}
       <Dialog
         open={open}
         onClose={() => setOpen(false)}
         maxWidth="md"
         fullWidth
+        fullScreen={isSmallScreen}
         PaperProps={{
           component: motion.div,
           initial: { opacity: 0, y: -30 },
@@ -563,16 +601,19 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
           exit: { opacity: 0, y: -30 },
           transition: { duration: 0.3 },
           sx: {
-            borderRadius: 4,
-            pb: 8,
+            borderRadius: { xs: 0, md: 4 },
             bgcolor: "#121212",
             backdropFilter: "blur(20px)",
-            border: `2px solid ${primaryBlue}`,
+            pb: 4,
+            border: { md: `2px solid ${primaryBlue}` },
             boxShadow: "0 12px 40px rgba(0,0,0,0.7)",
+            m: { xs: 0 },
+            width: { xs: "100%", md: "60%" },
+            height: { xs: "100%", md: "auto" },
           },
         }}
       >
-        <DialogContent>
+        <DialogContent sx={{ p: { xs: 1, md: 4 } }}>
           <Stack spacing={4}>
             {/* ===== Header ===== */}
             <Typography
@@ -767,7 +808,7 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
               </Stack>
             </Box>
 
-             {/* ===== Fixed Actions ===== */}
+            {/* ===== Fixed Actions ===== */}
             <Box
               sx={{
                 position: "absolute",
@@ -806,7 +847,6 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
                 Save
               </Button>
             </Box>
-
           </Stack>
         </DialogContent>
       </Dialog>
@@ -819,10 +859,10 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
       >
         <Alert
           onClose={() => setOpenSnackbar(false)}
-          severity="success" 
-          icon={true} 
+          severity="success"
+          icon={true}
           sx={{
-            bgcolor: "#22c55ea7",  
+            bgcolor: "#22c55ea7",
             color: "#fff",
             borderRadius: 2,
             boxShadow: "0 4px 12px rgba(0,0,0,0.3)",

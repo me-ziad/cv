@@ -260,8 +260,7 @@ export default function Login() {
                   sx={{
                     mt: 3,
                     py: 1.2,
-                    fontWeight: "bold",
-                    borderRadius: 2,
+                     borderRadius: 2,
                     background: loading
                       ? "#313131ff"
                       : "linear-gradient(135deg, #1976d2, #42a5f5)",

@@ -111,7 +111,7 @@ export default function SkillsProDark() {
 
           {error && <Typography color="error">{error}</Typography>}
 
-          <Stack direction="row" gap={2} flexWrap="wrap">
+          <Stack direction="row" gap={{xs:1,md:2}} flexWrap="wrap">
             {list.map((skill, index) => (
             <Chip
               key={`${skill}-${index}`}  
@@ -119,7 +119,7 @@ export default function SkillsProDark() {
               onDelete={() => handleDelete(skill)}
               sx={{
                 fontSize: "0.9rem",
-                px: 1.5,
+                px: {xs:0,md:1.5},
                 borderRadius: "10px",
                 bgcolor: "#1e1e2f",
                 color: "#fff",
@@ -137,12 +137,15 @@ export default function SkillsProDark() {
             fullWidth
             maxWidth="sm"
             PaperProps={{
-              sx: {
-                bgcolor: "#121212",
-                borderRadius: 4,
-                border: `2px solid ${primaryBlue}`,
-                p: 3,
-              },
+                    sx: {
+            borderRadius: { xs: 0, md: 4 }, // على الموبايل مفيش radius
+            bgcolor: "#121212",
+            backdropFilter: "blur(20px)",
+            border: { md: `2px solid ${primaryBlue}` },
+            boxShadow: "0 12px 40px rgba(0,0,0,0.7)",
+            m: { xs: 0 }, // على الموبايل مفيش margin → ياخد الشاشة كلها
+            width: { xs: "100%", md: "40%" }, // على الموبايل العرض كله
+           },
             }}
           >
             <DialogContent>

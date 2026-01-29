@@ -13,6 +13,7 @@ import { ToastContainer } from 'react-toastify';
 import ProtectedRoute from './component/ProtectedRoute';
  import SeekerDashboard from './component/Dashboard/SeekerDashboard';
   import SeekerOverviewPage from './component/SeekerOverviewPage';
+import NotFoundPage from './component/NotFound';
   
  
    const routers = createBrowserRouter([
@@ -26,6 +27,7 @@ import ProtectedRoute from './component/ProtectedRoute';
         {path: "ResetPassword",element: <ResetPassword></ResetPassword>},
          {path: "SeekerProfile",element: <ProtectedRoute><SeekerDashboard></SeekerDashboard></ProtectedRoute>},
           {path: "seeker/overview/:id",element: <SeekerOverviewPage></SeekerOverviewPage>},
+          {path: "*",element: <NotFoundPage></NotFoundPage>},
  
     ]},
   ]);

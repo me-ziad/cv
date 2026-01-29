@@ -48,7 +48,7 @@
     };
 
     return (
-      <Box sx={{ maxWidth: 1000, mx: "auto", mt: 6, color: "#fff" }}>
+      <Box sx={{ maxWidth: 1000, mx: "auto", mt: 6, color: "#fff",p:5 }}>
         {/* Header */}
         <Stack direction="row" justifyContent="space-between" mb={3}>
           <Box>

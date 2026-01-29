@@ -170,7 +170,7 @@ export default function SeekerDashboard() {
         </Box>
       </Drawer>
 
-      <Box sx={{ mt: 3, p: 3 }}>
+      <Box sx={{ mt: 3, pt: 3  }}>
         {tab === 0 && <Overview />}
         {tab === 1 && <Skills />}
         {tab === 2 && <Education />}
