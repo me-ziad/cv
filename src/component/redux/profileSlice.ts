@@ -1,20 +1,18 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-
+ 
 const API_BASE = "https://node-hr.vercel.app"; 
 
-//  Fetch profile
+// fetchProfile 
 export const fetchProfile = createAsyncThunk(
   "profile/fetchProfile",
-  async (id?: string, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
-      const url = id
-        ? `${API_BASE}/auth/profile/${id}` 
-        : `${API_BASE}/auth/profile`; 
+      if (!token) return rejectWithValue("Token not found");
 
-      const { data } = await axios.get(url, {
-        headers: id ? {} : { Authorization: `Bearer ${token}` },
+      const { data } = await axios.get(`${API_BASE}/auth/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       return {
@@ -43,6 +41,41 @@ export const fetchProfile = createAsyncThunk(
     }
   }
 );
+
+// fetchPublicProfile  
+export const fetchPublicProfile = createAsyncThunk(
+  "profile/fetchPublicProfile",
+  async (id: string, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`${API_BASE}/public/profile/${id}`); // 🔥 public route
+      return {
+        id: data._id,
+        name: data.name,
+        avatar: data.avatar,
+        bio: data.bio,
+        phone: data.phone,
+        address: data.address,
+        position: data.position,
+        cvUrl: data.cvUrl,
+        skills: data.skills || [],
+        education: data.education || [],
+        experience: data.experience || [],
+        projects: data.projects || [],
+        github: data.github,
+        linkedin: data.linkedin,
+        portfolio: data.portfolio,
+        behance: data.behance,
+        dribbble: data.dribbble,
+        twitter: data.twitter,
+      };
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data?.message || "Failed to load public profile");
+    }
+  }
+);
+ 
+
+
 
 //  Upload CV
 export const uploadCv = createAsyncThunk(
@@ -169,7 +202,25 @@ const profileSlice = createSlice({
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.error = (action.payload as string) || "Error updating profile";
-      });
+      })
+
+      // Fetch public profile
+      .addCase(fetchPublicProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchPublicProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .addCase(fetchPublicProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      
+ 
+
+      
   },
 });
 

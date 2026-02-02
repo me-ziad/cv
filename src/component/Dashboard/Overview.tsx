@@ -20,6 +20,7 @@ import { Snackbar, Alert } from "@mui/material";
 import Loading from "../loading";
 import { motion } from "framer-motion";
 import { Preview } from "@mui/icons-material";
+import { useParams } from "react-router-dom";
 
 // BASE COLOE
 const BASE_URL = "https://node-hr.vercel.app";
@@ -91,7 +92,7 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
   const theme = useTheme();
   const primaryBlue = theme.palette.primary.main;
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
+const { id } = useParams();
   // SHARE
   const handleShare = async () => {
     if (!data?.id) return console.error("Profile ID not found");
@@ -126,10 +127,13 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
       },
     },
   };
-
-  useEffect(() => {
-    dispatch(fetchProfile());
-  }, [dispatch]);
+ useEffect(() => {
+    if (isPublic && id) {
+       dispatch(fetchProfile(id));
+    } else {
+       dispatch(fetchProfile());
+    }
+  }, [dispatch, isPublic, id]);
 
   useEffect(() => {
     if (data) setForm(data);
@@ -143,13 +147,13 @@ export default function Overview({ isPublic = false }: { isPublic?: boolean }) {
     formData.append("phone", form.phone || "");
     formData.append("address", form.address || "");
     formData.append("position", form.position || "");
-    if (form.github) formData.append("github", form.github);
-    if (form.linkedin) formData.append("linkedin", form.linkedin);
-    if (form.portfolio) formData.append("portfolio", form.portfolio);
-    if (form.behance) formData.append("behance", form.behance);
-    if (form.dribbble) formData.append("dribbble", form.dribbble);
-    if (form.twitter) formData.append("twitter", form.twitter);
-    if (avatarFile) formData.append("avatar", avatarFile);
+    if (form.github) formData.append("github", form.github|| "");
+    if (form.linkedin) formData.append("linkedin", form.linkedin|| "");
+    if (form.portfolio) formData.append("portfolio", form.portfolio|| "");
+    if (form.behance) formData.append("behance", form.behance|| "");
+    if (form.dribbble) formData.append("dribbble", form.dribbble|| "");
+    if (form.twitter) formData.append("twitter", form.twitter|| "");
+    if (avatarFile) formData.append("avatar", avatarFile|| "");
 
     dispatch(updateProfile(formData));
     setOpen(false);

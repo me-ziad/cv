@@ -6,18 +6,25 @@ const API_BASE = "https://node-hr.vercel.app";
 // Fetch projects
 export const fetchProjects = createAsyncThunk(
   "projects/fetchProjects",
-  async (_, { rejectWithValue }) => {
+  async (userId?: string, { rejectWithValue }) => {
     try {
       const token = localStorage.getItem("token");
-      const { data } = await axios.get(`${API_BASE}/auth/projects`, {
-        headers: { Authorization: `Bearer ${token}` },
+
+      const url = userId
+        ? `${API_BASE}/auth/projects/public/${userId}` // عام
+        : `${API_BASE}/auth/projects`;                // خاص
+
+      const { data } = await axios.get(url, {
+        headers: userId ? {} : { Authorization: `Bearer ${token}` },
       });
+
       return data.projects; // array of projects
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || "Failed to load projects");
     }
   }
 );
+
 
 // Add project (with images)
 export const addProject = createAsyncThunk(
